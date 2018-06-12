@@ -1,12 +1,14 @@
 package com.example.android.newsreader;
 
+
 public class News {
 
-    String title; //webTitle
-    String section; //sectionName
-    String author; //firstName + lastName
-    String date; //webPublicationDate
-    String url; //webUrl
+    String title;
+    String section;
+    String author;
+    String date;
+    String url;
+
 
     public News(String title, String section, String author, String date, String url) {
         this.title = title;
@@ -14,6 +16,7 @@ public class News {
         this.author = author;
         this.date = date;
         this.url = url;
+
     }
 
     public String getTitle() {

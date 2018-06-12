@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">News Reader</string>
-
-
-    <string name="no_internet">no internet</string>
-    <string name="empty_list">empty list</string>
+    <string name="no_internet">No internet connection!</string>
+    <string name="empty_list">No news to display!</string>
 </resources>

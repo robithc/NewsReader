@@ -23,136 +23,92 @@ import java.util.List;
 
 public class QueryUtils {
 
-    //Log tag contains class name
-    private static final String LOG_TAG = QueryUtils.class.getName();
+    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
-    //Constructor is made private because no instances should be created of this class
     private QueryUtils() {
     }
 
-    /*
-    Main fetch method that will take the URL string and return the
-    ArrayList to the loadInBackground method in the NewsLoader
-    */
-    public static List<News> fetchNewsItemsData(String url) {
+    public static List<News> fetchNewsData(String requestUrl) {
 
-        URL ncUrl = createUrl(url); //Build the URL from the passed string
-
-        /*
-         jsonResponse used to store the JSON response as string and use
-         it later to extract JSON objects and arrays
-        */
-        String jsonResponse;
+        URL url = createUrl(requestUrl);
+        String jsonResponse = null;
 
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        jsonResponse = makeHttpRequest(url);
 
-        //Initiate data fetch from the internet and store the resultant JSON string
-        jsonResponse = initHttpRequest(ncUrl);
-
-        /*
-        Use the jsonResponse string to extract NewsItem properties and return
-        ArrayList to the List<NewsItem> newsItems array
-        */
-
-        List<News> news = extractResultsFromJSON(jsonResponse);
-
-        //Return the populated list the loadInBackground method in NewsLoader
+        List<News> news = extractFeatureFromJSON(jsonResponse);
         return news;
     }
 
-    /*
-    Method to extract JSON Objects and arrays and use them to
-    get NewsItem data then add them to ArrayList and return it.
-    */
-    private static List<News> extractResultsFromJSON(String newsJSON) {
+    private static List<News> extractFeatureFromJSON(String newsJSON) {
 
-        //Check if the passed JSON string is empty, if so then just return null.
         if (TextUtils.isEmpty(newsJSON)) {
             return null;
         }
 
-        //List used to store the data extracted from JSON objects and arrays
         List<News> newsItemsArrayList = new ArrayList<>();
 
-        String title; //Store title
-        String section; //Store section
-        String url; //Store url of the news item
-        String firstName; //Store the first name of contributor
-        String lastName; //Store the last name of contributor
-        String author; //The author consists of first name and last name (if any available
-        String rawDate; //Store the raw date string from JSON object
-        String date; //Stores the formatted raw date in NewsItem object
+        String title;
+        String section;
+        String url;
+        String firstName;
+        String lastName;
+        String author;
+        String rawDate;
+        String formattedDate;
 
-        /*
-        Fetch JSON objects and arrays and use them to get NewsItem data
-        and them to newsItemsArrayList
-        */
         try {
-            JSONObject rootJsonObject = new JSONObject(newsJSON);
-            JSONObject responsesJasonObj = rootJsonObject.getJSONObject("response");
-            JSONArray jsonResultsArray = responsesJasonObj.getJSONArray("results");
+            JSONObject baseJsonObject = new JSONObject(newsJSON);
+            JSONObject responseJsonObj = baseJsonObject.getJSONObject("response");
+            JSONArray jsonResultsArray = responseJsonObj.getJSONArray("results");
 
-            /*
-            Loop through the JSONArray and extract NewsItem data and
-            then add them to newsItemsArrayList
-            */
             for (int i = 0; i < jsonResultsArray.length(); i++) {
-                JSONObject currentJson = jsonResultsArray.getJSONObject(i);
-                title = currentJson.getString("webTitle");
-                section = currentJson.getString("sectionName");
-                url = currentJson.getString("webUrl");
-                JSONArray tagsArray = currentJson.getJSONArray("tags");
+                JSONObject currentNews = jsonResultsArray.getJSONObject(i);
+                title = currentNews.getString("webTitle");
+                section = currentNews.getString("sectionName");
+                url = currentNews.getString("webUrl");
+                JSONArray tagsArray = currentNews.getJSONArray("tags");
 
-                //Check if there is a tags JSONArray that contains contributor/author name
                 if (!tagsArray.isNull(0)) {
                     JSONObject currentTagObj = tagsArray.getJSONObject(0);
 
-                    //Check if there is first name and store otherwise set it to null
                     if (!currentTagObj.isNull("firstName")) {
                         firstName = currentTagObj.getString("firstName");
                     } else {
                         firstName = null;
                     }
 
-                    //Check if there is last name and store otherwise set it to null
                     if (!currentTagObj.isNull("lastName")) {
                         lastName = currentTagObj.getString("lastName");
                     } else {
                         lastName = null;
                     }
 
-                    //Call method to store formatted Author name
                     author = getAuthorName(firstName, lastName);
                 } else {
                     author = null;
                 }
 
-                //Check if there is JSON date in the Json array otherwise return null
-                if (!currentJson.isNull("webPublicationDate")) {
-                    rawDate = currentJson.getString("webPublicationDate");
-                    date = getFormattedDate(rawDate); //Format raw date and store it in date
+                if (!currentNews.isNull("webPublicationDate")) {
+                    rawDate = currentNews.getString("webPublicationDate");
+                    formattedDate = getFormattedDate(rawDate);
                 } else {
-                    date = null;
+                    formattedDate = null;
                 }
 
-                //Add the fetched NewsItem properties to the newsItemsArrayList
-                newsItemsArrayList.add(new News(title, section, author, date, url));
+                News createdNews = new News(title, section, author, formattedDate, url);
+                newsItemsArrayList.add(createdNews);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        //return the newsItemsArrayList
         return newsItemsArrayList;
-
     }
 
-    //Format the raw date fetched from the JSON object and a user friendly date
     private static String getFormattedDate(String rawDate) {
         if (rawDate == null) {
             return null;
@@ -168,10 +124,6 @@ public class QueryUtils {
         return formattedDate.format(date);
     }
 
-    /*
-    Get the first name and last name if available and return the
-    formatted available names, otherwise null
-    */
     private static String getAuthorName(String firstName, String lastName) {
         if (firstName == null && lastName == null) {
             return null;
@@ -184,11 +136,7 @@ public class QueryUtils {
         }
     }
 
-    /*
-    Initiate internet connection and fetch JSON string
-    from the Json data source URL
-    */
-    private static String initHttpRequest(URL ncUrl) {
+    private static String makeHttpRequest(URL ncUrl) {
         String jsonResponse = null;
 
         if (ncUrl == null) {
@@ -219,9 +167,7 @@ public class QueryUtils {
                 urlConnection.disconnect();
             }
             if (inputStream != null) {
-                // Closing the input stream could throw an IOException, which is why
-                // the makeHttpRequest(URL url) method signature specifies than an IOException
-                // could be thrown.
+
                 try {
                     inputStream.close();
                 } catch (IOException e) {
@@ -232,43 +178,37 @@ public class QueryUtils {
         return jsonResponse;
     }
 
-    //Read the raw byte stream and return the whole stream as String
     private static String readFromStream(InputStream inputStream) throws IOException {
 
-        //Check if InputStream is available otherwise return null
         if (inputStream == null) {
             return null;
         }
-
         StringBuilder output = new StringBuilder();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        String line = bufferedReader.readLine();
+        BufferedReader reader = new BufferedReader(inputStreamReader);
+        String line = reader.readLine();
         while (line != null) {
             output.append(line);
-            line = bufferedReader.readLine();
+            line = reader.readLine();
         }
 
         return output.toString();
     }
 
-    //Method constructs URL from string and returns URL object
-    private static URL createUrl(String url) {
+    private static URL createUrl(String stringUrl) {
 
-        URL nUrl = null;
-        //Checks if an empty url string has been passed
-        if (url == null) {
-            return nUrl;
+        URL url = null;
+
+        if (stringUrl == null) {
+            return url;
         }
 
-        //Try to construct URL from string and if failed then catch error and return null
         try {
-            nUrl = new URL(url);
+            url = new URL(stringUrl);
         } catch (MalformedURLException e) {
             Log.e(LOG_TAG, "ERROR CREATING URL");
             e.printStackTrace();
         }
-
-        return nUrl;
+        return url;
     }
 }
