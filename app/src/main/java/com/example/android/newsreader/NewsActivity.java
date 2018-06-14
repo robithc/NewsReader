@@ -94,11 +94,8 @@ public class NewsActivity extends AppCompatActivity
         Uri baseUri = Uri.parse(API_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendQueryParameter(ARG_QUERY, queryString);
-        uriBuilder.appendQueryParameter("order-By", orderBy);
+        uriBuilder.appendQueryParameter("order-by", orderBy);
         uriBuilder.appendQueryParameter("api-key", "test");
-
-
-
 
 
         Log.v(LOG_TAG, "News Activity onCreateLoader called");
