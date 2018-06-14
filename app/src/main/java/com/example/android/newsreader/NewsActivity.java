@@ -5,10 +5,12 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -28,9 +30,10 @@ public class NewsActivity extends AppCompatActivity
 
     private static final String LOG_TAG = NewsActivity.class.getName();
     private static final int API_LOADER_ID = 1;
-    private final String API_REQUEST_URL =
-            "http://content.guardianapis.com/search?order-by=newest&show-tags=contributor&page" +
-                    "=1&page-size=30&q=Android&api-key=753788d5-bd1b-4084-8cb8-5a473d5ecdef";
+    private static final String API_REQUEST_URL =
+            "http://content.guardianapis.com/search?show-tags=contributor&page" +
+                    "=1&page-size=100&q";
+    private static final String SEARCH_QUERY_KEY = "query";
     ProgressBar pbProgressBar;
     private TextView mEmptyStateTextView;
     private NewsAdapter mAdapter;
@@ -77,10 +80,29 @@ public class NewsActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
+        final String ARG_QUERY = "q";
+        String queryString;
+        if (args != null) queryString = args.getString(SEARCH_QUERY_KEY);
+        else queryString = "null";
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
+        Uri baseUri = Uri.parse(API_REQUEST_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendQueryParameter(ARG_QUERY, queryString);
+        uriBuilder.appendQueryParameter("order-By", orderBy);
+        uriBuilder.appendQueryParameter("api-key", "test");
+
+
+
+
+
         Log.v(LOG_TAG, "News Activity onCreateLoader called");
-        return new NewsLoader(this, API_REQUEST_URL);
+        return new NewsLoader(this, uriBuilder.toString());
     }
 
     @Override

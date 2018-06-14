@@ -17,7 +17,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.settings_activity);
     }
 
-    public static class SettingsFragment extends PreferenceFragment
+    public static class NewsPreferenceFragment extends PreferenceFragment
             implements Preference.OnPreferenceChangeListener {
 
         @Override
@@ -30,9 +30,8 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            if (preference instanceof CheckBoxPreference) return true;
-            String stringValue = newValue.toString();
+        public boolean onPreferenceChange(Preference preference, Object value) {
+            String stringValue = value.toString();
             if (preference instanceof ListPreference) {
                 ListPreference listPreference = (ListPreference) preference;
                 int prefIndex = listPreference.findIndexOfValue(stringValue);
@@ -40,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
                     CharSequence[] labels = listPreference.getEntries();
                     preference.setSummary(labels[prefIndex]);
                 }
+            } else {
+                preference.setSummary(stringValue);
             }
             return true;
         }
