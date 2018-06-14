@@ -2,4 +2,10 @@
     <string name="app_name">News Reader</string>
     <string name="no_internet">No internet connection!</string>
     <string name="empty_list">No news to display!</string>
+
+
+    <string name="settings_menu_item">Settings</string>
+    <string name="settings_title">News Settings</string>
+
+
 </resources>
