@@ -122,9 +122,7 @@ public class NewsActivity extends AppCompatActivity
     }
 
     @Override
-    // This method initialize the contents of the Activity's options menu.
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the Options Menu we specified in XML
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
