@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,16 +23,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class NewsActivity extends AppCompatActivity
         implements LoaderCallbacks<List<News>> {
 
     private static final String LOG_TAG = NewsActivity.class.getName();
     private static final int API_LOADER_ID = 1;
     private static final String API_REQUEST_URL =
-            "http://content.guardianapis.com/search?show-tags=contributor&page" +
-                    "=1&page-size=100&q";
-    private static final String SEARCH_QUERY_KEY = "query";
+            "http://content.guardianapis.com/search?";
+
     ProgressBar pbProgressBar;
     private TextView mEmptyStateTextView;
     private NewsAdapter mAdapter;
@@ -80,25 +77,31 @@ public class NewsActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
-        final String ARG_QUERY = "q";
-        String queryString;
-        if (args != null) queryString = args.getString(SEARCH_QUERY_KEY);
-        else queryString = "null";
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String categoryChoice = sharedPrefs.getString(
+                getString(R.string.settings_section_key),
+                getString(R.string.settings_section_default)
+        );
+
         String orderBy = sharedPrefs.getString(
                 getString(R.string.settings_order_by_key),
-                getString(R.string.settings_order_by_default));
+                getString(R.string.settings_order_by_default)
+        );
+
         Uri baseUri = Uri.parse(API_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter(ARG_QUERY, queryString);
+        uriBuilder.appendQueryParameter("page-size", "100");
+        uriBuilder.appendQueryParameter("show-tags", "contributor&page");
+        uriBuilder.appendQueryParameter("show-fields", "byline");
+        uriBuilder.appendQueryParameter("q", "future");
+        uriBuilder.appendQueryParameter("section", categoryChoice);
         uriBuilder.appendQueryParameter("order-by", orderBy);
+        uriBuilder.appendQueryParameter("from-date", "2018-01-01");
         uriBuilder.appendQueryParameter("api-key", "test");
 
-
-        Log.v(LOG_TAG, "News Activity onCreateLoader called");
         return new NewsLoader(this, uriBuilder.toString());
     }
 
@@ -117,7 +120,6 @@ public class NewsActivity extends AppCompatActivity
     public void onLoaderReset(Loader loader) {
         mAdapter.clear();
     }
-
 
     @Override
     // This method initialize the contents of the Activity's options menu.

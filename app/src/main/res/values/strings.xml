@@ -3,12 +3,11 @@
     <string name="no_internet">No internet connection!</string>
     <string name="empty_list">No news to display!</string>
 
-
-    <!--SETTINGS-->
+    //SETTINGS
     <string name="settings_menu_item">Settings</string>
     <string name="settings_title">News App Settings</string>
 
-    <!--String for Order-By Preference-->
+    //String for Order-By Preference
     <string name="settings_order_by_label">Order By</string>
     <string name="settings_order_by_key" translatable="false">order-By</string>
     <string name="settings_order_by_default" translatable="false">@string/settings_order_by_newest_value</string>
@@ -16,19 +15,40 @@
     <string name="settings_order_by_newest_label">Newest</string>
     <string name="settings_order_by_newest_value" translatable="false">newest</string>
 
-
     <string name="settings_order_by_oldest_label">Oldest</string>
     <string name="settings_order_by_oldest_value" translatable="false">oldest</string>
 
     <string name="settings_order_by_relevance_label">Relevance</string>
     <string name="settings_order_by_relevance_value" translatable="false">relevance</string>
 
-
-    <!-- Strings For Category Preference [CHAR LIMIT=30] -->
+    //Strings For Category Preference
     <string name="settings_category_label">Article Category</string>
-    <!-- The following key is the value that will be appended to the URI -->
     <string name="settings_category_key" translatable="false">category</string>
     <string name="settings_category_default" translatable="false">technology</string>
 
+    //Strings for section preferences
+    <string name="settings_section_label">Category</string>
+    <string name="settings_section_key" translatable="false">section</string>
+    <string name="settings_section_default" translatable="false">business</string>
+
+    //Label for the business news
+    <string name="settings_business_label">business</string>
+    <string name="settings_business_value" translatable="false">business</string>
+
+    //Label for football news
+    <string name="settings_football_label">football</string>
+    <string name="settings_football_value" translatable="false">football</string>
+
+    //Label for culture news
+    <string name="settings_culture_label">culture</string>
+    <string name="settings_culture_value" translatable="false">culture</string>
+
+    //Label for technology news
+    <string name="settings_technology_label">technology</string>
+    <string name="settings_technology_value" translatable="false">technology</string>
+
+    //Label for politics news
+    <string name="settings_politics_label">politics</string>
+    <string name="settings_politics_value" translatable="false">politics</string>
 
 </resources>

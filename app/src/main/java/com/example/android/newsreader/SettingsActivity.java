@@ -2,7 +2,6 @@ package com.example.android.newsreader;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -27,6 +26,9 @@ public class SettingsActivity extends AppCompatActivity {
 
             Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
             bindPreferenceSummaryToValue(orderBy);
+
+            Preference categoryName = findPreference(getString(R.string.settings_section_key));
+            bindPreferenceSummaryToValue(categoryName);
         }
 
         @Override
